@@ -3,7 +3,7 @@ import { cache } from "react";
 import { cookies } from "next/headers";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
-import { organizations, users } from "@/db/schema";
+import { users } from "@/db/schema";
 
 const SESSION_COOKIE = "session";
 
@@ -13,7 +13,7 @@ export async function createSession(userId: string) {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
-    path: "/",
+    path: "/"
   });
 }
 

@@ -1,9 +1,11 @@
+import { LogoutButton } from '@/app/components/logout-button';
 export default function AnalyticsPage() {
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">
-        Analytics Dashboard
-      </h1>
+      <header className="mb-6 flex items-center justify-between">
+        <h1 className="text-2xl font-bold">Analytics Dashboard</h1>
+        <LogoutButton/>
+      </header>
     </div>
   );
 }

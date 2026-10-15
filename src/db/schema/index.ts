@@ -2,20 +2,20 @@ import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 
 export const organizations = sqliteTable("organizations", {
   id: text("id").primaryKey(),
-  name: text("name").notNull(),
-  slug: text("slug").notNull().unique(),
-  createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+  name: text("name").notNull().unique(),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull()
 });
 
 export const users = sqliteTable("users", {
   id: text("id").primaryKey(),
   email: text("email").notNull().unique(),
+  passwordHash: text("password_hash").notNull(),
   name: text("name").notNull(),
   role: text("role").notNull(),
   organizationId: text("organization_id")
     .notNull()
     .references(() => organizations.id),
-  createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull()
 });
 
 export const projects = sqliteTable("projects", {
@@ -30,7 +30,7 @@ export const projects = sqliteTable("projects", {
     .notNull()
     .references(() => users.id),
   createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
-  updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp" }).notNull()
 });
 
 export const activityLogs = sqliteTable("activity_logs", {
@@ -41,5 +41,5 @@ export const activityLogs = sqliteTable("activity_logs", {
   userId: text("user_id")
     .notNull()
     .references(() => users.id),
-  createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull()
 });

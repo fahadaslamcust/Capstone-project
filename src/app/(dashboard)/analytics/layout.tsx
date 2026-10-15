@@ -8,10 +8,9 @@ export default function AnalyticsLayout({
   activity: React.ReactNode;
 }) {
   return (
-    <div>
+    <div className="px-6 py-8">
       {children}
-
-      <div className="grid grid-cols-2 gap-4 mt-6">
+      <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
         {stats}
         {activity}
       </div>

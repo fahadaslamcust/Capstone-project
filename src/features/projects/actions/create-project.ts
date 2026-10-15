@@ -1,6 +1,6 @@
 'use server';
 
-import { revalidateTag } from 'next/cache';
+import { revalidatePath } from 'next/cache';
 import { db } from '@/db';
 import { projects, activityLogs } from '@/db/schema';
 import { getCurrentUser } from '@/lib/dal/auth';
@@ -23,31 +23,37 @@ export async function createProjectAction(prevState: any, formData: FormData) {
   }
 
   const projectId = crypto.randomUUID();
+  const now = new Date();
 
-  // Run as a transaction so both project creation and log creation succeed or fail together
-  await db.transaction(async (tx) => {
-    await tx.insert(projects).values({
-      id: projectId,
-      name: parsed.data.name,
-      description: parsed.data.description,
-      organizationId: user.organization_id,
-      createdById: user.id,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      status: "active"
-    });
+  // better-sqlite3 transactions are synchronous: no async callback, no await, .run() on each query.
+  // If either insert throws, both are rolled back.
+  db.transaction((tx) => {
+    tx.insert(projects)
+      .values({
+        id: projectId,
+        name: parsed.data.name,
+        description: parsed.data.description,
+        organizationId: user.organization_id,
+        createdById: user.id,
+        createdAt: now,
+        updatedAt: now,
+        status: "active",
+      })
+      .run();
 
-    await tx.insert(activityLogs).values({
-      id: crypto.randomUUID(),
-      action: 'PROJECT_CREATED',
-      entityType: 'project',
-      entityId: projectId,
-      userId: user.id,
-      createdAt: new Date()
-    });
+    tx.insert(activityLogs)
+      .values({
+        id: crypto.randomUUID(),
+        action: 'PROJECT_CREATED',
+        entityType: 'project',
+        entityId: projectId,
+        userId: user.id,
+        createdAt: now,
+      })
+      .run();
   });
 
-  revalidateTag('projects','max');
-  
+  revalidatePath('/projects');
+  revalidatePath('/analytics');
   return { success: true };
 }
