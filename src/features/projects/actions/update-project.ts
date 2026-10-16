@@ -6,9 +6,9 @@ import { db } from "@/db";
 import { projects } from "@/db/schema";
 import { getCurrentUser } from "@/lib/dal/auth";
 import { logActivity } from "@/lib/log-activity";
-import { UpdateProjectSchema } from "../schemas/project";
+import { UpdateProjectSchema, type UpdateProjectState} from "../schemas/project";
 
-export async function updateProjectAction(prevState: any, formData: FormData) {
+export async function updateProjectAction(prevState: UpdateProjectState, formData: FormData):Promise<UpdateProjectState> {
 	const user = await getCurrentUser();
 	if (!user) return { error: "Unauthorized" };
 

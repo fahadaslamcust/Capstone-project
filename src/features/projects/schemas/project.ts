@@ -8,3 +8,8 @@ export const CreateProjectSchema = z.object({
 export const UpdateProjectSchema = CreateProjectSchema.extend({
 	id: z.string().uuid(),
 });
+export type UpdateProjectState = {
+	success?: boolean;
+	error?: string;
+	fieldErrors?: Record<string, string[] | undefined>;
+} | null;

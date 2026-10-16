@@ -22,7 +22,7 @@ export function ProjectList({
 	);
 
 	const [state, formAction, isPending] = useActionState(
-		async (prevState: any, formData: FormData) => {
+		async (prevState: unknown, formData: FormData) => {
 			// Optimistic addition
 			addOptimisticProject({
 				id: Math.random().toString(), // Temp ID

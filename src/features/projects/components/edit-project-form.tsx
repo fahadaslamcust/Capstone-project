@@ -1,20 +1,22 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useState } from "react";
 import { updateProjectAction } from "@/features/projects/actions/update-project";
+import type { UpdateProjectState } from "../schemas/project";
 
 type Props = { id: string; name: string; description: string | null };
 
 export function EditProjectForm({ id, name, description }: Props) {
 	const [open, setOpen] = useState(false);
-	const [state, formAction, pending] = useActionState(
-		updateProjectAction,
+
+	const [state, formAction, isPending] = useActionState(
+		async (prev: UpdateProjectState, formData: FormData) => {
+			const result = await updateProjectAction(prev, formData);
+			if (result?.success) setOpen(false);
+			return result;
+		},
 		null,
 	);
-
-	useEffect(() => {
-		if (state?.success) setOpen(false);
-	}, [state]);
 
 	if (!open) {
 		return (
@@ -46,10 +48,10 @@ export function EditProjectForm({ id, name, description }: Props) {
 			<div className="flex gap-3 text-sm">
 				<button
 					type="submit"
-					disabled={pending}
+					disabled={isPending}
 					className="text-blue-600 disabled:opacity-50"
 				>
-					{pending ? "Saving..." : "Save"}
+					{isPending ? "Saving..." : "Save"}
 				</button>
 				<button
 					type="button"

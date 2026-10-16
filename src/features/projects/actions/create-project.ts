@@ -6,7 +6,7 @@ import { activityLogs, projects } from "@/db/schema";
 import { getCurrentUser } from "@/lib/dal/auth";
 import { CreateProjectSchema } from "../schemas/project";
 
-export async function createProjectAction(prevState: any, formData: FormData) {
+export async function createProjectAction(prevState: unknown, formData: FormData) {
 	const user = await getCurrentUser();
 	if (!user) return { error: "Unauthorized" };
 
