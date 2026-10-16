@@ -1,5 +1,10 @@
 import "server-only";
+import { cache } from "react";
 import { cookies } from "next/headers";
+import { eq } from "drizzle-orm";
+import { db } from "@/db";
+import { organizations, users } from "@/db/schema";
+
 const SESSION_COOKIE = "session";
 
 export async function createSession(userId: string) {
@@ -11,18 +16,30 @@ export async function createSession(userId: string) {
     path: "/",
   });
 }
+
 export async function verifySession() {
   const cookieStore = await cookies();
   const session = cookieStore.get(SESSION_COOKIE);
   if (!session?.value) {
     return null;
   }
-  return {
-    userId: session.value,
-  };
+  return { userId: session.value };
 }
 
 export async function deleteSession() {
   const cookieStore = await cookies();
   cookieStore.delete(SESSION_COOKIE);
 }
+
+export const getCurrentUser = cache(async () => {
+  const session = await verifySession();
+  if (!session) return null;
+
+  const [user] = await db
+    .select({ id: users.id, email: users.email, role: users.role, organization_id: users.organizationId })
+    .from(users)
+    .where(eq(users.id, session.userId))
+    .limit(1);
+
+  return user ?? null;
+});
