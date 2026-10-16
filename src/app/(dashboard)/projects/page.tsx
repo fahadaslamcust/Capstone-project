@@ -1,3 +1,4 @@
+export const instant = false;
 import { Suspense } from 'react';
 import { SearchBar } from '@/features/projects/components/search-bar';
 import { ProjectListServer } from '@/features/projects/components/project-list-server';
