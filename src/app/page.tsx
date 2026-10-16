@@ -1,3 +1,3 @@
 export default function Home() {
-	return;
+	return <p>go to  http://localhost:3000/login</p>
 }

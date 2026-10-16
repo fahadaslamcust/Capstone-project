@@ -3,15 +3,10 @@ import { useActionState } from "react";
 import { signupAction } from "@/actions/auth";
 
 export default function SignupPage() {
-	const [state, formAction, pending] = useActionState(signupAction, {
-		error: null,
-	});
+	const [state, formAction, pending] = useActionState(signupAction, {error: null});
 	return (
 		<main className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
-			<form
-				action={formAction}
-				className="flex w-80 flex-col gap-4 rounded-lg bg-white p-6 shadow"
-			>
+			<form action={formAction} className="flex w-80 flex-col gap-4 rounded-lg bg-white p-6 shadow">
 				<h1 className="text-2xl font-bold text-center">Sign Up</h1>
 				<input
 					name="name"
@@ -46,9 +41,7 @@ export default function SignupPage() {
 					defaultValue=""
 					className="rounded border p-2"
 				>
-					<option value="" disabled>
-						Select role
-					</option>
+					<option value="" disabled>Select role</option>
 					<option value="admin">Admin</option>
 					<option value="member">Member</option>
 				</select>

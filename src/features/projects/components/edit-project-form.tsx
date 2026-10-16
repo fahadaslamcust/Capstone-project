@@ -4,20 +4,22 @@ import { useActionState, useState } from "react";
 import { updateProjectAction } from "@/features/projects/actions/update-project";
 import type { UpdateProjectState } from "../schemas/project";
 
-type Props = { id: string; name: string; description: string | null };
+type Props = { 
+	id: string;
+	name: string;
+	description: string | null
+};
 
 export function EditProjectForm({ id, name, description }: Props) {
 	const [open, setOpen] = useState(false);
-
 	const [state, formAction, isPending] = useActionState(
 		async (prev: UpdateProjectState, formData: FormData) => {
 			const result = await updateProjectAction(prev, formData);
 			if (result?.success) setOpen(false);
 			return result;
 		},
-		null,
+		null
 	);
-
 	if (!open) {
 		return (
 			<button
@@ -29,7 +31,6 @@ export function EditProjectForm({ id, name, description }: Props) {
 			</button>
 		);
 	}
-
 	return (
 		<form action={formAction} className="w-full space-y-2">
 			<input type="hidden" name="id" value={id} />
@@ -46,18 +47,10 @@ export function EditProjectForm({ id, name, description }: Props) {
 			/>
 			{state?.error && <p className="text-xs text-red-500">{state.error}</p>}
 			<div className="flex gap-3 text-sm">
-				<button
-					type="submit"
-					disabled={isPending}
-					className="text-blue-600 disabled:opacity-50"
-				>
+				<button type="submit" disabled={isPending} className="text-blue-600 disabled:opacity-50">
 					{isPending ? "Saving..." : "Save"}
 				</button>
-				<button
-					type="button"
-					onClick={() => setOpen(false)}
-					className="text-gray-500"
-				>
+				<button type="button" onClick={() => setOpen(false)}className="text-gray-500">
 					Cancel
 				</button>
 			</div>

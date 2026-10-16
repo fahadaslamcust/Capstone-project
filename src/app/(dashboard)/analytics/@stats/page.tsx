@@ -6,17 +6,14 @@ import { getCurrentUser } from "@/lib/dal/auth";
 export default async function StatsPage() {
 	const user = await getCurrentUser();
 	if (!user) return null;
-
 	const rows = await db
 		.select({ status: projects.status, total: count() })
 		.from(projects)
 		.where(eq(projects.organizationId, user.organization_id))
 		.groupBy(projects.status);
-
 	const byStatus = Object.fromEntries(rows.map((r) => [r.status, r.total]));
 	const active = byStatus.active ?? 0;
 	const archived = byStatus.archived ?? 0;
-
 	return (
 		<div className="rounded border p-4">
 			<h2 className="mb-3 font-semibold">Project stats</h2>

@@ -9,24 +9,12 @@ import { CreateProjectSchema } from "../schemas/project";
 export async function createProjectAction(prevState: unknown, formData: FormData) {
 	const user = await getCurrentUser();
 	if (!user) return { error: "Unauthorized" };
-
-	const parsed = CreateProjectSchema.safeParse({
-		name: formData.get("name"),
-		description: formData.get("description"),
-	});
-
+	const parsed = CreateProjectSchema.safeParse({name: formData.get("name"),description: formData.get("description")});
 	if (!parsed.success) {
-		return {
-			error: "Validation failed",
-			fieldErrors: parsed.error.flatten().fieldErrors,
-		};
+		return {error: "Validation failed",fieldErrors: parsed.error.flatten().fieldErrors};
 	}
-
 	const projectId = crypto.randomUUID();
 	const now = new Date();
-
-	// better-sqlite3 transactions are synchronous: no async callback, no await, .run() on each query.
-	// If either insert throws, both are rolled back.
 	db.transaction((tx) => {
 		tx.insert(projects)
 			.values({
@@ -37,10 +25,9 @@ export async function createProjectAction(prevState: unknown, formData: FormData
 				createdById: user.id,
 				createdAt: now,
 				updatedAt: now,
-				status: "active",
+				status: "active"
 			})
 			.run();
-
 		tx.insert(activityLogs)
 			.values({
 				id: crypto.randomUUID(),
@@ -48,11 +35,10 @@ export async function createProjectAction(prevState: unknown, formData: FormData
 				entityType: "project",
 				entityId: projectId,
 				userId: user.id,
-				createdAt: now,
+				createdAt: now
 			})
 			.run();
 	});
-
 	revalidatePath("/projects");
 	revalidatePath("/analytics");
 	return { success: true };

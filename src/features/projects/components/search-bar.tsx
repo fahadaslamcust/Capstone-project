@@ -13,10 +13,7 @@ export function SearchBar() {
 				<option value="active">Active</option>
 				<option value="archived">Archived</option>
 			</select>
-			<button
-				type="submit"
-				className="bg-gray-800 text-white px-4 py-2 rounded"
-			>
+			<button type="submit" className="bg-gray-800 text-white px-4 py-2 rounded">
 				Search
 			</button>
 		</Form>

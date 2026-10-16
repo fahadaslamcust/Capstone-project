@@ -17,10 +17,7 @@ function isRole(value: string): value is Role {
 	return (ROLES as readonly string[]).includes(value);
 }
 
-export async function loginAction(
-	_prevState: AuthState,
-	formData: FormData,
-): Promise<AuthState> {
+export async function loginAction(_prevState: AuthState,formData: FormData): Promise<AuthState> {
 	const email = String(formData.get("email") ?? "")
 		.trim()
 		.toLowerCase();
@@ -51,20 +48,14 @@ export async function loginAction(
 	redirect(user.role === "admin" ? "/projects" : "/analytics");
 }
 
-export async function signupAction(
-	_prevState: AuthState,
-	formData: FormData,
-): Promise<AuthState> {
+export async function signupAction(_prevState: AuthState,formData: FormData): Promise<AuthState> {
 	const name = String(formData.get("name") ?? "").trim();
-	const email = String(formData.get("email") ?? "")
-		.trim()
-		.toLowerCase();
+	const email = String(formData.get("email") ?? "").trim().toLowerCase();
 	const password = String(formData.get("password") ?? "");
 	const organizationName = String(
 		formData.get("organizationName") ?? "",
 	).trim();
 	const role = String(formData.get("role") ?? "");
-
 	if (!name || !email || !password || !organizationName || !role) {
 		return { error: "All fields are required." };
 	}
@@ -77,23 +68,13 @@ export async function signupAction(
 	if (password.length < 5) {
 		return { error: "Password must be at least 5 characters." };
 	}
-
-	const existing = db
-		.select({ id: users.id })
-		.from(users)
-		.where(eq(users.email, email))
-		.get();
+	const existing = db.select({ id: users.id }).from(users).where(eq(users.email, email)).get();
 	if (existing) {
 		return { error: "An account with this email already exists." };
 	}
-	const org = db
-		.select({ id: organizations.id })
-		.from(organizations)
-		.where(
+	const org = db.select({ id: organizations.id }).from(organizations).where(
 			sql`lower(${organizations.name}) = ${organizationName.toLowerCase()}`,
-		)
-		.get();
-
+		).get();
 	if (org && role === "admin") {
 		return {
 			error: "That organization already exists. Select Member to join it.",
@@ -109,17 +90,11 @@ export async function signupAction(
 	const organizationId = org?.id ?? crypto.randomUUID();
 	const userId = crypto.randomUUID();
 	const now = new Date();
-
 	try {
 		db.transaction((tx) => {
 			if (!org) {
 				tx.insert(organizations)
-					.values({
-						id: organizationId,
-						name: organizationName,
-						createdAt: now,
-					})
-					.run();
+					.values({id: organizationId,name: organizationName,createdAt: now}).run();
 			}
 			tx.insert(users)
 				.values({
@@ -129,14 +104,12 @@ export async function signupAction(
 					role,
 					organizationId,
 					passwordHash,
-					createdAt: now,
-				})
-				.run();
+					createdAt: now
+				}).run();
 		});
 	} catch {
 		return { error: "Could not create the account. Please try again." };
 	}
-
 	await createSession(userId);
 	redirect("/login");
 }

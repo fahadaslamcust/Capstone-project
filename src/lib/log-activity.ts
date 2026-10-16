@@ -4,7 +4,7 @@ import { activityLogs } from "@/db/schema";
 export async function logActivity(
 	userId: string,
 	action: "PROJECT_CREATED" | "PROJECT_UPDATED" | "PROJECT_ARCHIVED",
-	projectId: string,
+	projectId: string
 ) {
 	await db.insert(activityLogs).values({
 		id: crypto.randomUUID(),
@@ -12,6 +12,6 @@ export async function logActivity(
 		entityType: "project",
 		entityId: projectId,
 		userId,
-		createdAt: new Date(),
+		createdAt: new Date()
 	});
 }

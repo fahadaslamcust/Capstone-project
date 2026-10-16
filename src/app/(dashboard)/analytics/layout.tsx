@@ -1,8 +1,4 @@
-export default function AnalyticsLayout({
-	children,
-	stats,
-	activity,
-}: {
+export default function AnalyticsLayout({children,stats,activity}: {
 	children: React.ReactNode;
 	stats: React.ReactNode;
 	activity: React.ReactNode;

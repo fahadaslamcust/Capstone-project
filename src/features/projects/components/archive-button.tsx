@@ -6,7 +6,6 @@ import { archiveProjectAction } from "@/features/projects/actions/archive-projec
 export function ArchiveButton({ projectId }: { projectId: string }) {
 	const [pending, startTransition] = useTransition();
 	const [error, setError] = useState<string | null>(null);
-
 	function handleClick() {
 		setError(null);
 		startTransition(async () => {
@@ -14,7 +13,6 @@ export function ArchiveButton({ projectId }: { projectId: string }) {
 			if (result?.error) setError(result.error);
 		});
 	}
-
 	return (
 		<div>
 			<button

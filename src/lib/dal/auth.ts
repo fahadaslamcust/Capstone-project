@@ -13,7 +13,7 @@ export async function createSession(userId: string) {
 		httpOnly: true,
 		secure: process.env.NODE_ENV === "production",
 		sameSite: "lax",
-		path: "/",
+		path: "/"
 	});
 }
 
@@ -34,17 +34,15 @@ export async function deleteSession() {
 export const getCurrentUser = cache(async () => {
 	const session = await verifySession();
 	if (!session) return null;
-
 	const [user] = await db
 		.select({
 			id: users.id,
 			email: users.email,
 			role: users.role,
-			organization_id: users.organizationId,
+			organization_id: users.organizationId
 		})
 		.from(users)
 		.where(eq(users.id, session.userId))
 		.limit(1);
-
 	return user ?? null;
 });
