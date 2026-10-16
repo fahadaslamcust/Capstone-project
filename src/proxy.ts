@@ -1,23 +1,20 @@
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 
 export function proxy(request: NextRequest) {
-  const session = request.cookies.get("session");
-  if (request.nextUrl.pathname.startsWith("/dashboard") && !session) {
-    return NextResponse.redirect(new URL("/login", request.url));
-  }
-  const headers = new Headers(request.headers);
+	const session = request.cookies.get("session");
+	if (!session) {
+		return NextResponse.redirect(new URL("/login", request.url));
+	}
+	const headers = new Headers(request.headers);
+	headers.set("x-request-id", crypto.randomUUID());
 
-  if (session) {
-    headers.set("x-request-id", crypto.randomUUID());
-  }
-
-  return NextResponse.next({
-    request: {
-      headers,
-    },
-  });
+	return NextResponse.next({
+		request: {
+			headers,
+		},
+	});
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*"],
+	matcher: ["/projects/:path*", "/analytics/:path*"],
 };
