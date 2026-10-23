@@ -5,7 +5,7 @@ import { resourceFromAttributes } from "@opentelemetry/resources";
 
 const provider = new LoggerProvider({
   resource: resourceFromAttributes({ "service.name": "my-nextjs-app" }),
-  processors: [new SimpleLogRecordProcessor(new OTLPLogExporter())],
+  processors: [new SimpleLogRecordProcessor({ exporter: new OTLPLogExporter() })],
 });
 
 logs.setGlobalLoggerProvider(provider);
