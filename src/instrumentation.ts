@@ -1,13 +1,9 @@
-
-import { NodeSDK } from "@opentelemetry/sdk-node";
-import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
+import { registerOTel } from "@vercel/otel";
 
 export async function register() {
-  const sdk = new NodeSDK({
-    traceExporter: new OTLPTraceExporter(),
-  });
+  registerOTel({ serviceName: "my-nextjs-app" });
 
-  sdk.start();
-
-  console.log("OpenTelemetry initialized");
+  if (process.env.NEXT_RUNTIME === "nodejs") {
+    await import("./instrumentation.node");
+  }
 }
