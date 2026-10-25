@@ -1,24 +1,31 @@
 "use server";
 
-import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { db } from "@/db";
-import { projects } from "@/db/schema";
 import { getCurrentUser } from "@/lib/dal/auth";
-import { logActivity } from "@/lib/log-activity";
+import { archiveProjectInD1 } from "@/lib/d1-worker";
 
 export async function archiveProjectAction(projectId: string) {
-	const user = await getCurrentUser();
-	if (!user) return { error: "Unauthorized" };
-	if (user.role !== "admin") return { error: "Forbidden" };
-	const updated = await db
-		.update(projects)
-		.set({ status: "archived", updatedAt: new Date() })
-		.where(and(eq(projects.id, projectId),eq(projects.organizationId, user.organization_id)))
-		.returning({ id: projects.id });
-	if (updated.length === 0) return { error: "Project not found" };
-	await logActivity(user.id, "PROJECT_ARCHIVED", projectId);
-	revalidatePath("/projects");
-	revalidatePath("/analytics");
-	return { success: true };
+  const user = await getCurrentUser();
+
+  if (!user) return { error: "Unauthorized" };
+  if (user.role !== "admin") return { error: "Forbidden" };
+
+  try {
+    await archiveProjectInD1({
+      projectId,
+      organizationId: user.organization_id,
+      userId: user.id,
+    });
+  } catch (error) {
+    if (error instanceof Error && error.message.includes("(404)")) {
+      return { error: "Project not found" };
+    }
+
+    return { error: "Could not archive project. Please try again." };
+  }
+
+  revalidatePath("/projects");
+  revalidatePath("/analytics");
+
+  return { success: true };
 }
