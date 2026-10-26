@@ -4,7 +4,7 @@ import { OTLPLogExporter } from "@opentelemetry/exporter-logs-otlp-http";
 import { resourceFromAttributes } from "@opentelemetry/resources";
 
 const provider = new LoggerProvider({
-  resource: resourceFromAttributes({ "service.name": "my-nextjs-app" }),
+  resource: resourceFromAttributes({ "service.name": "capstone" }),
   processors: [new SimpleLogRecordProcessor({ exporter: new OTLPLogExporter() })],
 });
 
