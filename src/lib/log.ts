@@ -1,9 +1,9 @@
 import { logs, SeverityNumber } from "@opentelemetry/api-logs";
-import { after } from "next/server";
+import { waitUntil } from "@vercel/functions";
 const logger = logs.getLogger("app");
 function flush() {
   const provider = (globalThis as any).__otelLoggerProvider;
-  if (provider) after(() => provider.forceFlush());
+  if (provider) waitUntil(provider.forceFlush());
 }
 export function logInfo(body: string, attributes: Record<string, string | number | boolean> = {}) {
   logger.emit({ severityNumber: SeverityNumber.INFO, severityText: "INFO", body, attributes });
