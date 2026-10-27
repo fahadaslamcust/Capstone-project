@@ -1,5 +1,5 @@
 "use server";
-
+import { logInfo } from "@/lib/log";
 import bcrypt from "bcryptjs";
 import { redirect } from "next/navigation";
 import { createSession, deleteSession } from "@/lib/dal/auth";
@@ -54,6 +54,7 @@ export async function loginAction(
     _prevState: AuthState,
     formData: FormData,
 ): Promise<AuthState> {
+    logInfo("Login called");
     const email = String(formData.get("email") ?? "").trim().toLowerCase();
     const password = String(formData.get("password") ?? "");
 
@@ -86,6 +87,7 @@ export async function signupAction(
     _prevState: AuthState,
     formData: FormData,
 ): Promise<AuthState> {
+    logInfo("Sign up called");
     const name = String(formData.get("name") ?? "").trim();
     const email = String(formData.get("email") ?? "").trim().toLowerCase();
     const password = String(formData.get("password") ?? "");
@@ -150,6 +152,8 @@ export async function signupAction(
 }
 
 export async function logoutAction() {
+    logInfo("Login called");
     await deleteSession();
     redirect("/login");
 }
+   

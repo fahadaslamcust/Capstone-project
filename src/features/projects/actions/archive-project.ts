@@ -1,10 +1,11 @@
 "use server";
-
+import { logInfo } from "@/lib/log";
 import { revalidatePath } from "next/cache";
 import { getCurrentUser } from "@/lib/dal/auth";
 import { archiveProjectInD1 } from "@/lib/d1-worker";
 
 export async function archiveProjectAction(projectId: string) {
+  logInfo("archive-project called", { projectId });
   const user = await getCurrentUser();
 
   if (!user) return { error: "Unauthorized" };
