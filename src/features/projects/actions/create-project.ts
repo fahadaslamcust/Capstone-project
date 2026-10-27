@@ -1,5 +1,5 @@
 "use server";
-
+import { logInfo } from "@/lib/log";
 import { revalidatePath } from "next/cache";
 import { getCurrentUser } from "@/lib/dal/auth";
 import { createProjectInD1 } from "@/lib/d1-worker";
@@ -9,6 +9,7 @@ export async function createProjectAction(
     prevState: unknown,
     formData: FormData
 ) {
+    logInfo("create-project called");
     const user = await getCurrentUser();
 
     if (!user) {

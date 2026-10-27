@@ -1,5 +1,5 @@
 "use server";
-
+import { logInfo } from "@/lib/log";
 import { revalidatePath } from "next/cache";
 import { getCurrentUser } from "@/lib/dal/auth";
 import { updateProjectInD1 } from "@/lib/d1-worker";
@@ -12,6 +12,7 @@ export async function updateProjectAction(
   prevState: UpdateProjectState,
   formData: FormData,
 ): Promise<UpdateProjectState> {
+  logInfo("update-project called");
   const user = await getCurrentUser();
 
   if (!user) return { error: "Unauthorized" };
