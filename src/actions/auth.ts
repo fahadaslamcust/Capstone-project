@@ -152,7 +152,7 @@ export async function signupAction(
 }
 
 export async function logoutAction() {
-    logInfo("Login called");
+    logInfo("Logout called");
     await deleteSession();
     redirect("/login");
 }
