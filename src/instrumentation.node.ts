@@ -5,6 +5,7 @@ import {
 	LoggerProvider,
 	SimpleLogRecordProcessor,
 } from "@opentelemetry/sdk-logs";
+
 declare global {
 	var otelLoggerProvider: LoggerProvider | undefined;
 }
