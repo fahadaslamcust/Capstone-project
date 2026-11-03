@@ -1,42 +1,42 @@
 "use server";
-import { logInfo } from "@/lib/log";
 import { revalidatePath } from "next/cache";
-import { getCurrentUser } from "@/lib/dal/auth";
 import { createProjectInD1 } from "@/lib/d1-worker";
+import { getCurrentUser } from "@/lib/dal/auth";
+import { logInfo } from "@/lib/log";
 import { CreateProjectSchema } from "../schemas/project";
 
 export async function createProjectAction(
-    prevState: unknown,
-    formData: FormData
+	_prevState: unknown,
+	formData: FormData,
 ) {
-    logInfo("create-project called");
-    const user = await getCurrentUser();
+	logInfo("create-project called");
+	const user = await getCurrentUser();
 
-    if (!user) {
-        return { error: "Unauthorized" };
-    }
+	if (!user) {
+		return { error: "Unauthorized" };
+	}
 
-    const parsed = CreateProjectSchema.safeParse({
-        name: formData.get("name"),
-        description: formData.get("description"),
-    });
+	const parsed = CreateProjectSchema.safeParse({
+		name: formData.get("name"),
+		description: formData.get("description"),
+	});
 
-    if (!parsed.success) {
-        return {
-            error: "Validation failed",
-            fieldErrors: parsed.error.flatten().fieldErrors,
-        };
-    }
+	if (!parsed.success) {
+		return {
+			error: "Validation failed",
+			fieldErrors: parsed.error.flatten().fieldErrors,
+		};
+	}
 
-    await createProjectInD1({
-        name: parsed.data.name,
-        description: parsed.data.description ?? null,
-        organizationId: user.organization_id,
-        createdById: user.id,
-    });
+	await createProjectInD1({
+		name: parsed.data.name,
+		description: parsed.data.description ?? null,
+		organizationId: user.organization_id,
+		createdById: user.id,
+	});
 
-    revalidatePath("/projects");
-    revalidatePath("/analytics");
+	revalidatePath("/projects");
+	revalidatePath("/analytics");
 
-    return { success: true };
+	return { success: true };
 }

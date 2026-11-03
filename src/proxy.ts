@@ -8,10 +8,10 @@ export function proxy(request: NextRequest) {
 	const headers = new Headers(request.headers);
 	headers.set("x-request-id", crypto.randomUUID());
 	return NextResponse.next({
-		request: {headers}
+		request: { headers },
 	});
 }
 
 export const config = {
-	matcher: ["/projects/:path*", "/analytics/:path*"]
+	matcher: ["/projects/:path*", "/analytics/:path*"],
 };

@@ -1,32 +1,32 @@
 "use server";
-import { logInfo } from "@/lib/log";
 import { revalidatePath } from "next/cache";
-import { getCurrentUser } from "@/lib/dal/auth";
 import { archiveProjectInD1 } from "@/lib/d1-worker";
+import { getCurrentUser } from "@/lib/dal/auth";
+import { logInfo } from "@/lib/log";
 
 export async function archiveProjectAction(projectId: string) {
-  logInfo("archive-project called", { projectId });
-  const user = await getCurrentUser();
+	logInfo("archive-project called", { projectId });
+	const user = await getCurrentUser();
 
-  if (!user) return { error: "Unauthorized" };
-  if (user.role !== "admin") return { error: "Forbidden" };
+	if (!user) return { error: "Unauthorized" };
+	if (user.role !== "admin") return { error: "Forbidden" };
 
-  try {
-    await archiveProjectInD1({
-      projectId,
-      organizationId: user.organization_id,
-      userId: user.id,
-    });
-  } catch (error) {
-    if (error instanceof Error && error.message.includes("(404)")) {
-      return { error: "Project not found" };
-    }
+	try {
+		await archiveProjectInD1({
+			projectId,
+			organizationId: user.organization_id,
+			userId: user.id,
+		});
+	} catch (error) {
+		if (error instanceof Error && error.message.includes("(404)")) {
+			return { error: "Project not found" };
+		}
 
-    return { error: "Could not archive project. Please try again." };
-  }
+		return { error: "Could not archive project. Please try again." };
+	}
 
-  revalidatePath("/projects");
-  revalidatePath("/analytics");
+	revalidatePath("/projects");
+	revalidatePath("/analytics");
 
-  return { success: true };
+	return { success: true };
 }

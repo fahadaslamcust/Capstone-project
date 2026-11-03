@@ -4,10 +4,10 @@ import { useActionState, useState } from "react";
 import { updateProjectAction } from "@/features/projects/actions/update-project";
 import type { UpdateProjectState } from "../schemas/project";
 
-type Props = { 
+type Props = {
 	id: string;
 	name: string;
-	description: string | null
+	description: string | null;
 };
 
 export function EditProjectForm({ id, name, description }: Props) {
@@ -18,7 +18,7 @@ export function EditProjectForm({ id, name, description }: Props) {
 			if (result?.success) setOpen(false);
 			return result;
 		},
-		null
+		null,
 	);
 	if (!open) {
 		return (
@@ -47,10 +47,18 @@ export function EditProjectForm({ id, name, description }: Props) {
 			/>
 			{state?.error && <p className="text-xs text-red-500">{state.error}</p>}
 			<div className="flex gap-3 text-sm">
-				<button type="submit" disabled={isPending} className="text-blue-600 disabled:opacity-50">
+				<button
+					type="submit"
+					disabled={isPending}
+					className="text-blue-600 disabled:opacity-50"
+				>
 					{isPending ? "Saving..." : "Save"}
 				</button>
-				<button type="button" onClick={() => setOpen(false)}className="text-gray-500">
+				<button
+					type="button"
+					onClick={() => setOpen(false)}
+					className="text-gray-500"
+				>
 					Cancel
 				</button>
 			</div>
