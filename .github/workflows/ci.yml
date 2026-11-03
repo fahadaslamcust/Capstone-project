@@ -41,6 +41,9 @@ jobs:
 
       - name: E2E Tests
         run: pnpm playwright test
+        env:
+          D1_WORKER_URL: ${{ secrets.D1_WORKER_URL }}
+          D1_WORKER_SECRET: ${{ secrets.D1_WORKER_SECRET }}
 
       - name: Typecheck                       
         run: pnpm tsc --noEmit
